@@ -31,10 +31,10 @@ dependencies:
   flutter:
     sdk: flutter
   file_picker: ^8.0.0
-  ffmpeg_kit_flutter: ^6.0.3
   permission_handler: ^11.3.0
-  cupertino_icons: ^1.0.8
-
+  path_provider: ^2.1.2
+  ffmpeg_kit_flutter_new: ^4.1.0   # <-- Is line ko change karna hai
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
