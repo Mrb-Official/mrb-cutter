@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
 import 'package:ffmpeg_kit_flutter_new/return_code.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'my_reels.dart'; // Nayi file yahan link ho gayi
+import 'my_reels.dart';
 
 void main() {
   runApp(const ReelMakerApp());
@@ -20,7 +20,7 @@ class ReelMakerApp extends StatelessWidget {
       title: 'MRB Cutter Pro',
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0F172A), // Deep Premium Dark Blue
+        scaffoldBackgroundColor: const Color(0xFF0F172A),
         fontFamily: 'Roboto',
       ),
       home: const SplashIntroScreen(),
@@ -118,7 +118,9 @@ class _HomeScreenState extends State<HomeScreen> {
   String? _watermarkPath;
 
   Future<void> _requestPermissions() async {
-    await [Permission.storage, Permission.manageExternalStorage].request();
+    await Permission.videos.request();
+    await Permission.storage.request();
+    await Permission.manageExternalStorage.request();
   }
 
   Future<void> pickWatermark() async {
@@ -132,41 +134,75 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> processMovie() async {
-    await _requestPermissions();
+    try {
+      setState(() {
+        _statusText = "Checking Permissions...";
+        _logText = "Requesting storage access...";
+      });
 
-    FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.video);
-    if (result == null) return;
+      await _requestPermissions();
 
-    setState(() {
-      _isProcessing = true;
-      _statusText = "Extracting Raw Power... ⚡";
-    });
+      setState(() {
+        _statusText = "Opening Gallery...";
+        _logText = "Waiting for video selection...";
+      });
 
-    String inputPath = result.files.single.path!;
-    String movieName = result.files.single.name.split('.').first;
-    String outputDirPath = '/storage/emulated/0/Download/MRB_Reels_$movieName';
-    
-    Directory outputDir = Directory(outputDirPath);
-    if (!await outputDir.exists()) await outputDir.create(recursive: true);
+      FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.video);
+      
+      if (result == null) {
+        setState(() {
+          _statusText = "Action Cancelled!";
+          _logText = "No video selected.";
+        });
+        return;
+      }
 
-    String outputPathPattern = '$outputDirPath/reel_%03d.mp4';
-    
-    String ffmpegCommand;
-    if (_watermarkPath != null) {
-      ffmpegCommand = '-i "$inputPath" -i "$_watermarkPath" -filter_complex "[0:v]crop=ih*(9/16):ih[v];[v][1:v]overlay=main_w-overlay_w-20:20" -c:v libx264 -preset ultrafast -c:a aac -f segment -segment_time 30 -reset_timestamps 1 "$outputPathPattern"';
-    } else {
-      ffmpegCommand = '-i "$inputPath" -vf "crop=ih*(9/16):ih" -c:v libx264 -preset ultrafast -c:a aac -f segment -segment_time 30 -reset_timestamps 1 "$outputPathPattern"';
-    }
+      setState(() {
+        _isProcessing = true;
+        _statusText = "Extracting Raw Power... ⚡";
+        _logText = "Starting FFmpeg Engine...";
+      });
 
-    await FFmpegKit.executeAsync(ffmpegCommand, (session) async {
-      final returnCode = await session.getReturnCode();
+      String inputPath = result.files.single.path!;
+      String movieName = result.files.single.name.split('.').first;
+      String outputDirPath = '/storage/emulated/0/Download/MRB_Reels_$movieName';
+      
+      Directory outputDir = Directory(outputDirPath);
+      if (!await outputDir.exists()) await outputDir.create(recursive: true);
+
+      String outputPathPattern = '$outputDirPath/reel_%03d.mp4';
+      
+      String ffmpegCommand;
+      if (_watermarkPath != null) {
+        ffmpegCommand = '-i "$inputPath" -i "$_watermarkPath" -filter_complex "[0:v]crop=ih*(9/16):ih[v];[v][1:v]overlay=main_w-overlay_w-20:20" -c:v libx264 -preset ultrafast -c:a aac -f segment -segment_time 30 -reset_timestamps 1 "$outputPathPattern"';
+      } else {
+        ffmpegCommand = '-i "$inputPath" -vf "crop=ih*(9/16):ih" -c:v libx264 -preset ultrafast -c:a aac -f segment -segment_time 30 -reset_timestamps 1 "$outputPathPattern"';
+      }
+
+      await FFmpegKit.executeAsync(ffmpegCommand, (session) async {
+        final returnCode = await session.getReturnCode();
+        setState(() {
+          _isProcessing = false;
+          if (ReturnCode.isSuccess(returnCode)) {
+            _statusText = "Success! Reels in Downloads 📂";
+            _logText = "All clips saved successfully!";
+          } else {
+            _statusText = "Process Failed! ❌";
+            _logText = "FFmpeg Error Code: $returnCode";
+          }
+        });
+      }, (log) {
+        setState(() { _logText = log.getMessage(); });
+      });
+
+    } catch (e) {
+      // YEH HAI SILENT CRASH FIX
       setState(() {
         _isProcessing = false;
-        _statusText = ReturnCode.isSuccess(returnCode) ? "Success! Reels in Downloads 📂" : "Process Failed!";
+        _statusText = "Error Occurred! ⚠️";
+        _logText = e.toString();
       });
-    }, (log) {
-      setState(() { _logText = log.getMessage(); });
-    });
+    }
   }
 
   void showComingSoonDialog(String feature) {
@@ -175,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF1E293B),
         title: Text(feature, style: const TextStyle(color: Colors.white)),
-        content: const Text("Bhai, yeh feature abhi under development hai. Next update me aayega! 🚀", style: TextStyle(color: Colors.white70)),
+        content: const Text("Bhai, yeh feature next update me aayega! 🚀", style: TextStyle(color: Colors.white70)),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK", style: TextStyle(color: Colors.cyanAccent))),
         ],
@@ -247,7 +283,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () {
-                        // Yahan Nayi Screen Connect Ho Gayi!
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const MyReelsScreen()),
