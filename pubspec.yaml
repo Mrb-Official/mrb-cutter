@@ -1,17 +1,25 @@
-android {
-    namespace = "com.example.auto_reel_maker"
-    compileSdk = 34  // <-- ISKO 34 KARNA SABSE IMPORTANT HAI
+name: mrb_cutter
+description: "MRB Cutter Pro Reel Maker App"
+publish_to: "none"
+version: 1.0.1+2
 
-    sourceSets {
-        getByName("main") {
-            java.srcDirs("src/main/kotlin")
-        }
-    }
+environment:
+  sdk: ">=3.2.0 <4.0.0"
 
-    defaultConfig {
-        applicationId = "com.example.auto_reel_maker"
-        minSdk = 24
-        targetSdk = 34  // <-- ISKO BHI 34 KAR DE
-        versionCode = flutter.versionCode
-        versionName = flutter.versionName
-    }
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  file_picker: ^8.0.0
+  permission_handler: ^11.3.0
+  path_provider: ^2.1.2
+  ffmpeg_kit_flutter_new: ^4.1.0
+  open_file: ^3.3.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
