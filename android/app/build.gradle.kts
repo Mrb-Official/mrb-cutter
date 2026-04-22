@@ -20,11 +20,12 @@ android {
     }
 
     defaultConfig {
-    applicationId "com.example.auto_reel_maker"
-    minSdkVersion 24  // <-- Isko change karna hai
-    targetSdkVersion flutter.targetSdkVersion
-    versionCode flutter.versionCode
-    versionName flutter.versionName
+        // Yahan tera applicationId same rehne dena agar alag ho toh
+        applicationId = "com.example.auto_reel_maker" 
+        minSdk = 24  // <-- Ye dekh, isko 24 kiya hai
+        targetSdk = flutter.targetSdkVersion
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
     }
 
     buildTypes {
