@@ -29,11 +29,13 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Build Release APK
-        run: flutter build apk --release
+      # Ab yeh FAST Debug APK banayega
+      - name: Build Debug APK
+        run: flutter build apk --debug
 
+      # Debug APK ko hi upload karega
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: mrb-cutter-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: mrb-cutter-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
