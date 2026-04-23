@@ -15,11 +15,19 @@ dependencies:
   path_provider: ^2.1.2
   ffmpeg_kit_flutter_new: ^4.1.0
   open_file: ^3.3.2
+  dynamic_color: ^1.7.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1   # <-- 1. Package yahan add hua
+
+# 2. Icon generate karne ki settings yahan hai
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/logo.png"
 
 flutter:
   uses-material-design: true
