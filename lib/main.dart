@@ -18,9 +18,13 @@ class ReelMakerApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MRB Cutter Pro',
+      // YAHAN MATERIAL 3 DARK THEME SET KI HAI
       theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF0F172A),
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.cyanAccent, // Google style dynamic colors isse banenge
+          brightness: Brightness.dark,
+        ),
         fontFamily: 'Roboto',
       ),
       home: const SplashIntroScreen(),
@@ -29,7 +33,7 @@ class ReelMakerApp extends StatelessWidget {
 }
 
 // ==========================================
-// 1. SMART INTRO SCREEN (SPLASH SCREEN)
+// 1. TERA CUSTOM LOGO WALA SPLASH SCREEN
 // ==========================================
 class SplashIntroScreen extends StatefulWidget {
   const SplashIntroScreen({super.key});
@@ -49,6 +53,7 @@ class _SplashIntroScreenState extends State<SplashIntroScreen> with SingleTicker
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
 
+    // 3 second baad apne aap Home Screen par jayega
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
@@ -66,33 +71,23 @@ class _SplashIntroScreenState extends State<SplashIntroScreen> with SingleTicker
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0F172A),
       body: Center(
         child: FadeTransition(
           opacity: _animation,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(color: Colors.cyanAccent.withOpacity(0.5), blurRadius: 40, spreadRadius: 10),
-                  ],
-                ),
-                child: const Icon(Icons.slow_motion_video_rounded, size: 120, color: Colors.white),
+              // TERA LOGO YAHAN DIKHEGA
+              Image.asset(
+                'assets/logo.png', 
+                width: 180, 
+                height: 180,
+                // Agar galti se image nahi mili toh app crash nahi hogi
+                errorBuilder: (context, error, stackTrace) => const Icon(Icons.movie, size: 120),
               ),
               const SizedBox(height: 30),
-              const Text(
-                "MRB CUTTER",
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, letterSpacing: 3, color: Colors.white),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                "Smart. Fast. Viral.",
-                style: TextStyle(fontSize: 16, color: Colors.cyanAccent, letterSpacing: 1.5, fontWeight: FontWeight.w500),
-              ),
+              // Material 3 style loading indicator
+              const CircularProgressIndicator(),
             ],
           ),
         ),
@@ -160,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _isProcessing = true;
         _statusText = "Extracting Raw Power... ⚡";
-        _logText = "Starting FFmpeg Engine...";
+        _logText = "Starting FFmpeg Engine in Fast Mode...";
       });
 
       String inputPath = result.files.single.path!;
@@ -172,11 +167,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
       String outputPathPattern = '$outputDirPath/reel_%03d.mp4';
       
+      // FAST PROCESSING + INDEX START FROM 1 (-segment_start_number 1)
       String ffmpegCommand;
       if (_watermarkPath != null) {
-        ffmpegCommand = '-i "$inputPath" -i "$_watermarkPath" -filter_complex "[0:v]crop=ih*(9/16):ih[v];[v][1:v]overlay=main_w-overlay_w-20:20" -c:v libx264 -preset ultrafast -c:a aac -f segment -segment_time 30 -reset_timestamps 1 "$outputPathPattern"';
+        ffmpegCommand = '-i "$inputPath" -i "$_watermarkPath" -filter_complex "[0:v]crop=ih*(9/16):ih[v];[v][1:v]overlay=main_w-overlay_w-20:20" -c:v libx264 -preset ultrafast -crf 28 -threads 0 -c:a aac -f segment -segment_time 30 -segment_start_number 1 -reset_timestamps 1 "$outputPathPattern"';
       } else {
-        ffmpegCommand = '-i "$inputPath" -vf "crop=ih*(9/16):ih" -c:v libx264 -preset ultrafast -c:a aac -f segment -segment_time 30 -reset_timestamps 1 "$outputPathPattern"';
+        ffmpegCommand = '-i "$inputPath" -vf "crop=ih*(9/16):ih" -c:v libx264 -preset ultrafast -crf 28 -threads 0 -c:a aac -f segment -segment_time 30 -segment_start_number 1 -reset_timestamps 1 "$outputPathPattern"';
       }
 
       await FFmpegKit.executeAsync(ffmpegCommand, (session) async {
@@ -185,7 +181,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _isProcessing = false;
           if (ReturnCode.isSuccess(returnCode)) {
             _statusText = "Success! Reels in Downloads 📂";
-            _logText = "All clips saved successfully!";
+            _logText = "All clips saved! Index started from 1.";
           } else {
             _statusText = "Process Failed! ❌";
             _logText = "FFmpeg Error Code: $returnCode";
@@ -196,7 +192,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
 
     } catch (e) {
-      // YEH HAI SILENT CRASH FIX
       setState(() {
         _isProcessing = false;
         _statusText = "Error Occurred! ⚠️";
@@ -209,11 +204,10 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF1E293B),
-        title: Text(feature, style: const TextStyle(color: Colors.white)),
-        content: const Text("Bhai, yeh feature next update me aayega! 🚀", style: TextStyle(color: Colors.white70)),
+        title: Text(feature),
+        content: const Text("Bhai, yeh feature next update me aayega! 🚀"),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK", style: TextStyle(color: Colors.cyanAccent))),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK")),
         ],
       ),
     );
@@ -225,11 +219,10 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         title: const Text('MRB DASHBOARD', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, letterSpacing: 1.2)),
         centerTitle: true,
-        backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.person_pin, color: Colors.cyanAccent),
+            icon: const Icon(Icons.person_pin),
             onPressed: () => showComingSoonDialog("Creator Profile"),
           )
         ],
@@ -239,44 +232,49 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.cyanAccent.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(15),
-                border: Border.all(color: Colors.cyanAccent.withOpacity(0.3)),
-              ),
-              child: const Row(
-                children: [
-                  Icon(Icons.waving_hand_rounded, color: Colors.amberAccent),
-                  SizedBox(width: 10),
-                  Expanded(
-                    child: Text("Welcome back, Creator! Let's generate some viral content today.", 
-                      style: TextStyle(color: Colors.white, fontSize: 14)),
-                  ),
-                ],
+            // Material 3 Card Style
+            Card(
+              elevation: 0,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              child: const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Row(
+                  children: [
+                    Icon(Icons.waving_hand_rounded, color: Colors.amberAccent),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Text("Welcome back, Creator! Let's generate some viral content today.", 
+                        style: TextStyle(fontSize: 14)),
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 30),
 
             Center(
               child: Icon(Icons.auto_awesome_motion_rounded, 
-                size: 90, color: _watermarkPath != null ? Colors.greenAccent : Colors.cyanAccent),
+                size: 90, color: _watermarkPath != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary),
             ),
             const SizedBox(height: 15),
-            Text(_statusText, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white)),
+            Text(_statusText, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             
             Container(
               padding: const EdgeInsets.all(12),
               height: 70,
-              decoration: BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.circular(10)),
-              child: SingleChildScrollView(child: Text("> $_logText", style: const TextStyle(fontSize: 11, color: Colors.greenAccent, fontFamily: 'monospace'))),
+              decoration: BoxDecoration(
+                color: Colors.black26, 
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Theme.of(context).colorScheme.outlineVariant)
+              ),
+              child: SingleChildScrollView(child: Text("> $_logText", style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.primary, fontFamily: 'monospace'))),
             ),
             const Spacer(),
 
             if (_isProcessing) 
-              const Center(child: CircularProgressIndicator(color: Colors.cyanAccent))
+              const Center(child: CircularProgressIndicator())
             else ...[
               Row(
                 children: [
@@ -290,12 +288,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       icon: const Icon(Icons.folder_special, size: 18),
                       label: const Text("My Reels"),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        foregroundColor: Colors.white70,
-                        side: const BorderSide(color: Colors.white24),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      ),
                     ),
                   ),
                   const SizedBox(width: 15),
@@ -304,12 +296,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       onPressed: () => showComingSoonDialog("App Settings"),
                       icon: const Icon(Icons.settings, size: 18),
                       label: const Text("Settings"),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        foregroundColor: Colors.white70,
-                        side: const BorderSide(color: Colors.white24),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      ),
                     ),
                   ),
                 ],
@@ -320,31 +306,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: pickWatermark,
                 icon: const Icon(Icons.branding_watermark),
                 label: const Text("1. Select Premium Logo"),
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50), 
-                  foregroundColor: Colors.cyanAccent,
-                  side: const BorderSide(color: Colors.cyanAccent),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                ),
+                style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
               ),
               const SizedBox(height: 15),
               
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [BoxShadow(color: Colors.cyanAccent.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 5))],
-                ),
-                child: ElevatedButton.icon(
-                  onPressed: processMovie,
-                  icon: const Icon(Icons.play_arrow_rounded, size: 30),
-                  label: const Text("2. SELECT VIDEO & CUT", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1)),
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 60),
-                    backgroundColor: Colors.cyanAccent,
-                    foregroundColor: Colors.black87,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                  ),
-                ),
+              FilledButton.icon(
+                onPressed: processMovie,
+                icon: const Icon(Icons.play_arrow_rounded, size: 30),
+                label: const Text("2. SELECT VIDEO & CUT", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                style: FilledButton.styleFrom(minimumSize: const Size(double.infinity, 60)),
               ),
               const SizedBox(height: 20),
             ],
