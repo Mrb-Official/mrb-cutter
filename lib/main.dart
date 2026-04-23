@@ -16,7 +16,7 @@ class ReelMakerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Material You Dynamic Color integration
+    // Material You Dynamic Color integration for Google-style UI
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         ColorScheme colorScheme;
@@ -45,7 +45,7 @@ class ReelMakerApp extends StatelessWidget {
 }
 
 // ==========================================
-// 1. BRANDED SPLASH SCREEN
+// 1. BRANDED SPLASH SCREEN (LOGO BASED)
 // ==========================================
 class SplashIntroScreen extends StatefulWidget {
   const SplashIntroScreen({super.key});
@@ -65,6 +65,7 @@ class _SplashIntroScreenState extends State<SplashIntroScreen> with SingleTicker
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
 
+    // 3 seconds delay before moving to Dashboard
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
@@ -93,7 +94,7 @@ class _SplashIntroScreenState extends State<SplashIntroScreen> with SingleTicker
                 width: 160,
                 height: 160,
                 errorBuilder: (context, error, stackTrace) => 
-                    Icon(Icons.movie_creation_outlined, size: 100, color: Theme.of(context).colorScheme.primary),
+                    Icon(Icons.movie_filter_rounded, size: 120, color: Theme.of(context).colorScheme.primary),
               ),
               const SizedBox(height: 40),
               const CircularProgressIndicator(),
@@ -117,7 +118,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isProcessing = false;
-  String _statusText = "Ready to generate viral content";
+  String _statusText = "Ready to generate High-Quality content";
   String _logText = "Engine Idle. Awaiting user input...";
   String? _watermarkPath;
 
@@ -158,8 +159,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         _isProcessing = true;
-        _statusText = "Optimizing Video Assets... ⚡";
-        _logText = "Initializing high-speed FFmpeg engine...";
+        _statusText = "Processing High-Quality Reels... ⚡";
+        _logText = "Initializing FFmpeg HQ Engine (CRF 18)...";
       });
 
       String inputPath = result.files.single.path!;
@@ -171,12 +172,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
       String outputPathPattern = '$outputDirPath/reel_%03d.mp4';
       
-      // OPTIMIZED COMMAND: Fast preset, Start Index 1, Multi-threading enabled
+      // HQ COMMAND: CRF 18 for quality, Audio Copy for speed, Start Index 1
       String ffmpegCommand;
       if (_watermarkPath != null) {
-        ffmpegCommand = '-i "$inputPath" -i "$_watermarkPath" -filter_complex "[0:v]crop=ih*(9/16):ih[v];[v][1:v]overlay=main_w-overlay_w-20:20" -c:v libx264 -preset ultrafast -crf 28 -threads 0 -c:a aac -f segment -segment_time 30 -segment_start_number 1 -reset_timestamps 1 "$outputPathPattern"';
+        ffmpegCommand = '-i "$inputPath" -i "$_watermarkPath" -filter_complex "[0:v]crop=ih*(9/16):ih[v];[v][1:v]overlay=main_w-overlay_w-20:20" -c:v libx264 -preset ultrafast -crf 18 -threads 0 -c:a copy -f segment -segment_time 30 -segment_start_number 1 -reset_timestamps 1 "$outputPathPattern"';
       } else {
-        ffmpegCommand = '-i "$inputPath" -vf "crop=ih*(9/16):ih" -c:v libx264 -preset ultrafast -crf 28 -threads 0 -c:a aac -f segment -segment_time 30 -segment_start_number 1 -reset_timestamps 1 "$outputPathPattern"';
+        ffmpegCommand = '-i "$inputPath" -vf "crop=ih*(9/16):ih" -c:v libx264 -preset ultrafast -crf 18 -threads 0 -c:a copy -f segment -segment_time 30 -segment_start_number 1 -reset_timestamps 1 "$outputPathPattern"';
       }
 
       await FFmpegKit.executeAsync(ffmpegCommand, (session) async {
@@ -185,7 +186,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _isProcessing = false;
           if (ReturnCode.isSuccess(returnCode)) {
             _statusText = "Process Complete! 📂";
-            _logText = "Files exported to Downloads folder. Starting index: 1";
+            _logText = "HQ assets exported successfully. Files start from index 1.";
           } else {
             _statusText = "Processing Failed";
             _logText = "FFmpeg Exception Code: $returnCode";
@@ -209,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(feature),
-        content: const Text("This module is currently in beta. Stay tuned for the next release!"),
+        content: const Text("This module is currently in beta. Stay tuned for updates!"),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("Understood")),
         ],
@@ -221,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MRB DASHBOARD', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        title: const Text('MRB DASHBOARD', style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         actions: [
           IconButton(
@@ -235,18 +236,18 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Professional Welcome Card
+            // Material 3 Greeting Card
             Card(
               elevation: 0,
-              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              color: Theme.of(context).colorScheme.surfaceVariant,
               child: const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Icon(Icons.tips_and_updates_outlined, color: Colors.amber),
+                    Icon(Icons.auto_awesome_outlined, color: Colors.amber),
                     SizedBox(width: 12),
                     Expanded(
-                      child: Text("Welcome, Creator. Select a movie to generate high-quality 9:16 reels.", 
+                      child: Text("Welcome, Creator. Generate high-fidelity reels for your audience.", 
                         style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
                     ),
                   ],
@@ -255,10 +256,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 40),
 
-            // Expressive Status Icon
+            // Dynamic Status Icon
             Center(
               child: Icon(
-                _isProcessing ? Icons.sync_rounded : Icons.auto_awesome_rounded, 
+                _isProcessing ? Icons.published_with_changes_rounded : Icons.video_settings_rounded, 
                 size: 100, 
                 color: _watermarkPath != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
               ),
@@ -267,7 +268,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(_statusText, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             
-            // Console Terminal Log
+            // Professional Log Terminal
             Container(
               padding: const EdgeInsets.all(12),
               height: 80,
@@ -286,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (_isProcessing) 
               const Center(child: Padding(padding: EdgeInsets.all(20), child: LinearProgressIndicator()))
             else ...[
-              // Library & Settings Row
+              // Action Buttons Row
               Row(
                 children: [
                   Expanded(
@@ -294,15 +295,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => const MyReelsScreen()));
                       },
-                      icon: const Icon(Icons.video_library_outlined),
-                      label: const Text("My Library"),
+                      icon: const Icon(Icons.video_collection_outlined),
+                      label: const Text("My Archive"),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () => showComingSoonDialog("App Configurations"),
-                      icon: const Icon(Icons.tune_rounded),
+                      icon: const Icon(Icons.settings_suggest_outlined),
                       label: const Text("Settings"),
                     ),
                   ),
@@ -310,11 +311,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Main Functional Buttons
+              // Main Operations
               OutlinedButton.icon(
                 onPressed: pickWatermark,
                 icon: const Icon(Icons.branding_watermark_outlined),
-                label: const Text("Attach Brand Watermark"),
+                label: const Text("Attach Professional Watermark"),
                 style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 54)),
               ),
               const SizedBox(height: 16),
@@ -322,7 +323,7 @@ class _HomeScreenState extends State<HomeScreen> {
               FilledButton.icon(
                 onPressed: processMovie,
                 icon: const Icon(Icons.movie_filter_outlined, size: 28),
-                label: const Text("Process & Generate Reels", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                label: const Text("GENERATE HQ REELS", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 style: FilledButton.styleFrom(minimumSize: const Size(double.infinity, 64)),
               ),
               const SizedBox(height: 10),
