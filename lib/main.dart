@@ -87,7 +87,6 @@ class _SplashIntroScreenState extends State<SplashIntroScreen> with SingleTicker
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // PATH CHANGED HERE: .png to .jpg
               Image.asset(
                 'assets/logo.jpg',
                 width: 160,
@@ -169,7 +168,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
       String inputPath = result.files.single.path!;
       String movieName = result.files.single.name.split('.').first;
-      String outputDirPath = '/storage/emulated/0/Download/mrb_cutter_$movieName';
+      
+      // Yahan maine fix kiya hai taaki My Library (my_reels.dart) scan kar sake
+      String outputDirPath = '/storage/emulated/0/Download/MRB_$movieName';
       
       Directory outputDir = Directory(outputDirPath);
       if (!await outputDir.exists()) await outputDir.create(recursive: true);
