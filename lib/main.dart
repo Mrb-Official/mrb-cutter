@@ -16,7 +16,6 @@ class ReelMakerApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Material You Dynamic Color integration for Google-style UI
     return DynamicColorBuilder(
       builder: (ColorScheme? lightDynamic, ColorScheme? darkDynamic) {
         ColorScheme colorScheme;
@@ -31,7 +30,7 @@ class ReelMakerApp extends StatelessWidget {
 
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'MRB Cutter Pro',
+          title: 'mrb cutter', // Phone task switcher name
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: colorScheme,
@@ -45,7 +44,7 @@ class ReelMakerApp extends StatelessWidget {
 }
 
 // ==========================================
-// 1. BRANDED SPLASH SCREEN (LOGO BASED)
+// 1. SPLASH SCREEN
 // ==========================================
 class SplashIntroScreen extends StatefulWidget {
   const SplashIntroScreen({super.key});
@@ -65,7 +64,6 @@ class _SplashIntroScreenState extends State<SplashIntroScreen> with SingleTicker
     _animation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
 
-    // 3 seconds delay before moving to Dashboard
     Future.delayed(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
@@ -107,7 +105,7 @@ class _SplashIntroScreenState extends State<SplashIntroScreen> with SingleTicker
 }
 
 // ==========================================
-// 2. PROFESSIONAL DASHBOARD
+// 2. MAIN HOME SCREEN
 // ==========================================
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -118,8 +116,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isProcessing = false;
-  String _statusText = "Ready to generate High-Quality content";
-  String _logText = "Engine Idle. Awaiting user input...";
+  String _statusText = "Ready for the next viral hit!";
+  String _logText = "System Idle. Awaiting commands...";
   String? _watermarkPath;
 
   Future<void> _requestPermissions() async {
@@ -133,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (result != null) {
       setState(() {
         _watermarkPath = result.files.single.path;
-        _statusText = "Brand Logo Linked Successfully";
+        _statusText = "Premium Logo Attached! 👑";
       });
     }
   }
@@ -141,38 +139,43 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> processMovie() async {
     try {
       setState(() {
-        _statusText = "Authenticating Access...";
-        _logText = "Verifying storage permissions...";
+        _statusText = "Checking Permissions...";
+        _logText = "Requesting storage access...";
       });
 
       await _requestPermissions();
+
+      setState(() {
+        _statusText = "Opening Gallery...";
+        _logText = "Waiting for video selection...";
+      });
 
       FilePickerResult? result = await FilePicker.platform.pickFiles(type: FileType.video);
       
       if (result == null) {
         setState(() {
-          _statusText = "Operation Aborted";
-          _logText = "No video source selected.";
+          _statusText = "Action Cancelled!";
+          _logText = "No video selected.";
         });
         return;
       }
 
       setState(() {
         _isProcessing = true;
-        _statusText = "Processing High-Quality Reels... ⚡";
-        _logText = "Initializing FFmpeg HQ Engine (CRF 18)...";
+        _statusText = "Extracting Raw Power... ⚡";
+        _logText = "Starting FFmpeg HQ Engine...";
       });
 
       String inputPath = result.files.single.path!;
       String movieName = result.files.single.name.split('.').first;
-      String outputDirPath = '/storage/emulated/0/Download/MRB_Cutter_$movieName';
+      String outputDirPath = '/storage/emulated/0/Download/mrb_cutter_$movieName';
       
       Directory outputDir = Directory(outputDirPath);
       if (!await outputDir.exists()) await outputDir.create(recursive: true);
 
       String outputPathPattern = '$outputDirPath/reel_%03d.mp4';
       
-      // HQ COMMAND: CRF 18 for quality, Audio Copy for speed, Start Index 1
+      // HQ + Speed Command: CRF 18 aur Audio Copy ke sath
       String ffmpegCommand;
       if (_watermarkPath != null) {
         ffmpegCommand = '-i "$inputPath" -i "$_watermarkPath" -filter_complex "[0:v]crop=ih*(9/16):ih[v];[v][1:v]overlay=main_w-overlay_w-20:20" -c:v libx264 -preset ultrafast -crf 18 -threads 0 -c:a copy -f segment -segment_time 30 -segment_start_number 1 -reset_timestamps 1 "$outputPathPattern"';
@@ -185,11 +188,11 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _isProcessing = false;
           if (ReturnCode.isSuccess(returnCode)) {
-            _statusText = "Process Complete! 📂";
-            _logText = "HQ assets exported successfully. Files start from index 1.";
+            _statusText = "Success! Reels in Downloads 📂";
+            _logText = "HQ reels saved to mrb_cutter folder!";
           } else {
-            _statusText = "Processing Failed";
-            _logText = "FFmpeg Exception Code: $returnCode";
+            _statusText = "Process Failed! ❌";
+            _logText = "FFmpeg Error Code: $returnCode";
           }
         });
       }, (log) {
@@ -199,7 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       setState(() {
         _isProcessing = false;
-        _statusText = "System Error Occurred";
+        _statusText = "Error Occurred! ⚠️";
         _logText = e.toString();
       });
     }
@@ -210,9 +213,9 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(feature),
-        content: const Text("This module is currently in beta. Stay tuned for updates!"),
+        content: const Text("Bhai, yeh feature next update me aayega! 🚀"),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Understood")),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK")),
         ],
       ),
     );
@@ -222,72 +225,69 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MRB DASHBOARD', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('MRB DASHBOARD', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 1.2)),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: const Icon(Icons.account_circle_outlined),
+            icon: const Icon(Icons.person_pin),
             onPressed: () => showComingSoonDialog("Creator Profile"),
           )
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Material 3 Greeting Card
             Card(
               elevation: 0,
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               child: const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Icon(Icons.auto_awesome_outlined, color: Colors.amber),
-                    SizedBox(width: 12),
+                    Icon(Icons.waving_hand_rounded, color: Colors.amberAccent),
+                    SizedBox(width: 10),
                     Expanded(
-                      child: Text("Welcome, Creator. Generate high-fidelity reels for your audience.", 
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                      child: Text("Welcome back, Creator! Let's generate some viral content today.", 
+                        style: TextStyle(fontSize: 14)),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 30),
 
-            // Dynamic Status Icon
             Center(
               child: Icon(
-                _isProcessing ? Icons.published_with_changes_rounded : Icons.video_settings_rounded, 
-                size: 100, 
+                _isProcessing ? Icons.sync_rounded : Icons.auto_awesome_motion_rounded, 
+                size: 90, 
                 color: _watermarkPath != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
             Text(_statusText, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             
-            // Professional Log Terminal
             Container(
               padding: const EdgeInsets.all(12),
-              height: 80,
+              height: 70,
               decoration: BoxDecoration(
                 color: Colors.black26, 
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Theme.of(context).colorScheme.outlineVariant)
               ),
               child: SingleChildScrollView(
                 child: Text("> $_logText", 
-                  style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.primary, fontFamily: 'monospace')),
+                  style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.primary, fontFamily: 'monospace')),
               ),
             ),
             const Spacer(),
 
             if (_isProcessing) 
-              const Center(child: Padding(padding: EdgeInsets.all(20), child: LinearProgressIndicator()))
+              const Center(child: CircularProgressIndicator())
             else ...[
-              // Action Buttons Row
               Row(
                 children: [
                   Expanded(
@@ -295,15 +295,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       onPressed: () {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => const MyReelsScreen()));
                       },
-                      icon: const Icon(Icons.video_collection_outlined),
-                      label: const Text("My Archive"),
+                      icon: const Icon(Icons.folder_special, size: 18),
+                      label: const Text("My Reels"),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 15),
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: () => showComingSoonDialog("App Configurations"),
-                      icon: const Icon(Icons.settings_suggest_outlined),
+                      onPressed: () => showComingSoonDialog("App Settings"),
+                      icon: const Icon(Icons.settings, size: 18),
                       label: const Text("Settings"),
                     ),
                   ),
@@ -311,20 +311,19 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Main Operations
               OutlinedButton.icon(
                 onPressed: pickWatermark,
-                icon: const Icon(Icons.branding_watermark_outlined),
-                label: const Text("Attach Professional Watermark"),
-                style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 54)),
+                icon: const Icon(Icons.branding_watermark),
+                label: const Text("1. Select Premium Logo"),
+                style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 15),
               
               FilledButton.icon(
                 onPressed: processMovie,
-                icon: const Icon(Icons.movie_filter_outlined, size: 28),
-                label: const Text("GENERATE HQ REELS", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                style: FilledButton.styleFrom(minimumSize: const Size(double.infinity, 64)),
+                icon: const Icon(Icons.play_arrow_rounded, size: 30),
+                label: const Text("2. SELECT VIDEO & CUT", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                style: FilledButton.styleFrom(minimumSize: const Size(double.infinity, 60)),
               ),
               const SizedBox(height: 10),
             ],
