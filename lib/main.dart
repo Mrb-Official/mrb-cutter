@@ -30,7 +30,7 @@ class ReelMakerApp extends StatelessWidget {
 
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'mrb cutter', // Phone task switcher name
+          title: 'mrb cutter', 
           theme: ThemeData(
             useMaterial3: true,
             colorScheme: colorScheme,
@@ -116,8 +116,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool _isProcessing = false;
-  String _statusText = "Ready for the next viral hit!";
-  String _logText = "System Idle. Awaiting commands...";
+  String _statusText = "Ready to generate viral content";
+  String _logText = "Engine Idle. Awaiting user input...";
   String? _watermarkPath;
 
   Future<void> _requestPermissions() async {
@@ -213,7 +213,8 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(feature),
-        content: const Text("Bhai, yeh feature next update me aayega! 🚀"),
+        // TEXT FIXED HERE: Hinglish hata di
+        content: const Text("This feature will be available in the next update! 🚀"),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK")),
         ],
@@ -250,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Icon(Icons.waving_hand_rounded, color: Colors.amberAccent),
                     SizedBox(width: 10),
                     Expanded(
-                      child: Text("Welcome back, Creator! Let's generate some viral content today.", 
+                      child: Text("Welcome, Creator. Select a movie to generate high-quality 9:16 reels.", 
                         style: TextStyle(fontSize: 14)),
                     ),
                   ],
@@ -296,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(context, MaterialPageRoute(builder: (context) => const MyReelsScreen()));
                       },
                       icon: const Icon(Icons.folder_special, size: 18),
-                      label: const Text("My Reels"),
+                      label: const Text("My Library"),
                     ),
                   ),
                   const SizedBox(width: 15),
@@ -314,7 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
               OutlinedButton.icon(
                 onPressed: pickWatermark,
                 icon: const Icon(Icons.branding_watermark),
-                label: const Text("1. Select Premium Logo"),
+                label: const Text("Attach Brand Watermark"),
                 style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
               ),
               const SizedBox(height: 15),
@@ -322,7 +323,7 @@ class _HomeScreenState extends State<HomeScreen> {
               FilledButton.icon(
                 onPressed: processMovie,
                 icon: const Icon(Icons.play_arrow_rounded, size: 30),
-                label: const Text("2. SELECT VIDEO & CUT", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1)),
+                label: const Text("Process & Generate Reels", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1)),
                 style: FilledButton.styleFrom(minimumSize: const Size(double.infinity, 60)),
               ),
               const SizedBox(height: 10),
