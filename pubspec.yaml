@@ -21,15 +21,15 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-  flutter_launcher_icons: ^0.13.1   # <-- 1. Package yahan add hua
+  flutter_launcher_icons: ^0.13.1
 
 # 2. Icon generate karne ki settings yahan hai
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/logo.png"
+  image_path: "assets/logo.jpg"  # <-- YAHAN CHANGE KIYA HAI (.png se .jpg)
 
 flutter:
   uses-material-design: true
   assets:
-    - assets/logo.png
+    - assets/logo.jpg

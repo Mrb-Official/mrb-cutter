@@ -87,8 +87,9 @@ class _SplashIntroScreenState extends State<SplashIntroScreen> with SingleTicker
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              // PATH CHANGED HERE: .png to .jpg
               Image.asset(
-                'assets/logo.png',
+                'assets/logo.jpg',
                 width: 160,
                 height: 160,
                 errorBuilder: (context, error, stackTrace) => 
@@ -175,7 +176,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
       String outputPathPattern = '$outputDirPath/reel_%03d.mp4';
       
-      // HQ + Speed Command: CRF 18 aur Audio Copy ke sath
       String ffmpegCommand;
       if (_watermarkPath != null) {
         ffmpegCommand = '-i "$inputPath" -i "$_watermarkPath" -filter_complex "[0:v]crop=ih*(9/16):ih[v];[v][1:v]overlay=main_w-overlay_w-20:20" -c:v libx264 -preset ultrafast -crf 18 -threads 0 -c:a copy -f segment -segment_time 30 -segment_start_number 1 -reset_timestamps 1 "$outputPathPattern"';
@@ -213,7 +213,6 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(feature),
-        // TEXT FIXED HERE: Hinglish hata di
         content: const Text("This feature will be available in the next update! 🚀"),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK")),
