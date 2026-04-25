@@ -248,7 +248,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.all(16.0),
                 child: Row(
                   children: [
-                    Icon(Icons.waving_hand_rounded, color: Colors.amberAccent),
+                    // REPLACE 1: Waving hand ki jagah Bulb icon daala gaya hai
+                    Icon(Icons.wb_incandescent_outlined, color: Colors.amberAccent),
                     SizedBox(width: 10),
                     Expanded(
                       child: Text("Welcome, Creator. Select a movie to generate high-quality 9:16 reels.", 
@@ -262,7 +263,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
             Center(
               child: Icon(
-                _isProcessing ? Icons.sync_rounded : Icons.auto_awesome_motion_rounded, 
+                // REPLACE 2: Motion layers ki jagah Stars daale gaye hain
+                _isProcessing ? Icons.sync_rounded : Icons.auto_awesome_rounded, 
                 size: 90, 
                 color: _watermarkPath != null ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.secondary,
               ),
