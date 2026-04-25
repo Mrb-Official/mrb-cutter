@@ -162,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         _isProcessing = true;
-        _statusText = "Extracting Raw Power... ⚡";
+        _statusText = "Extracting Raw Power...";
         _logText = "Starting FFmpeg HQ Engine...";
       });
 
@@ -214,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(feature),
-        content: const Text("This feature will be available in the next update! 🚀"),
+        content: const Text("This feature will be available in the next update!, Stay Tuned"),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("OK")),
         ],
@@ -249,7 +249,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   children: [
                     // REPLACE 1: Waving hand ki jagah Bulb icon daala gaya hai
-                    Icon(Icons.wb_incandescent_outlined, color: Colors.amberAccent),
+                    Icon(Icons.lightbulb_outline, color: Colors.amberAccent),
                     SizedBox(width: 10),
                     Expanded(
                       child: Text("Welcome, Creator. Select a movie to generate high-quality 9:16 reels.", 
