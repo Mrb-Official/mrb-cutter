@@ -22,6 +22,7 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^3.0.0
   flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.6
 
 # 2. Icon generate karne ki settings yahan hai
 flutter_launcher_icons:
@@ -33,3 +34,11 @@ flutter:
   uses-material-design: true
   assets:
     - assets/logo.jpg
+
+
+flutter_native_splash:
+  color: "#000000" # Black background (teri dark theme ke hisaab se)
+  image: "assets/logo.jpg" # Tera logo path
+  android_12:
+    color: "#000000"
+    image: "assets/logo.jpg"

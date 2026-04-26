@@ -36,7 +36,7 @@ class ReelMakerApp extends StatelessWidget {
             colorScheme: colorScheme,
             fontFamily: 'Roboto',
           ),
-          home: const SplashIntroScreen(),
+          home: const HomeScreen(),
         );
       },
     );
