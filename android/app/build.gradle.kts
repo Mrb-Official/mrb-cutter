@@ -16,7 +16,9 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.meet.mrbcutter"
-    compileSdk = flutter.compileSdkVersion
+    
+    // Yahan API 34 strict kar diya hai permissions ke liye
+    compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -31,7 +33,10 @@ android {
     defaultConfig {
         applicationId = "com.meet.mrbcutter" 
         minSdk = 24  
-        targetSdk = flutter.targetSdkVersion
+        
+        // Yahan bhi API 34 strict kar diya hai
+        targetSdk = 34
+        
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
