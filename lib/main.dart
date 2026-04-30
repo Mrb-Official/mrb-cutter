@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:ffmpeg_kit_flutter_new/ffmpeg_kit.dart';
-import 'package:ffmpeg_kit_flutter_new/return_code.dart';
+import 'package:ffmpeg_kit_flutter_min/ffmpeg_kit.dart';
+import 'package:ffmpeg_kit_flutter_min/return_code.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'my_reels.dart';
