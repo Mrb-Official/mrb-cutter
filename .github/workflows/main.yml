@@ -3,7 +3,7 @@ name: Build MRB Cutter Release
 on:
   push:
     branches:
-      - main # Jab bhi main branch par push hoga, ye chal jayega
+      - main
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Setup Keystore & Properties (Ninja Technique)
+      - name: Setup Keystore & Properties
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -39,6 +39,78 @@ jobs:
           echo "keyPassword=$KEY_PASSWORD" >> android/key.properties
           echo "keyAlias=$KEY_ALIAS" >> android/key.properties
           echo "storeFile=upload-keystore.jks" >> android/key.properties
+
+      - name: Fix build.gradle
+        run: |
+          cat > android/app/build.gradle << 'EOF'
+          import java.util.Properties
+          import java.io.FileInputStream
+
+          plugins {
+              id("com.android.application")
+              id("kotlin-android")
+              id("dev.flutter.flutter-gradle-plugin")
+          }
+
+          val keystoreProperties = Properties()
+          val keystorePropertiesFile = rootProject.file("key.properties")
+          if (keystorePropertiesFile.exists()) {
+              keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+          }
+
+          android {
+              namespace = "com.meet.mrbcutter"
+              compileSdk = 36
+              ndkVersion = flutter.ndkVersion
+
+              compileOptions {
+                  sourceCompatibility = JavaVersion.VERSION_17
+                  targetCompatibility = JavaVersion.VERSION_17
+              }
+
+              kotlinOptions {
+                  jvmTarget = JavaVersion.VERSION_17.toString()
+              }
+
+              defaultConfig {
+                  applicationId = "com.meet.mrbcutter"
+                  minSdk = 24
+                  targetSdk = 36
+                  versionCode = flutter.versionCode
+                  versionName = flutter.versionName
+                  multiDexEnabled = true
+              }
+
+              signingConfigs {
+                  create("release") {
+                      keyAlias = keystoreProperties.getProperty("keyAlias")
+                      keyPassword = keystoreProperties.getProperty("keyPassword")
+                      val storeFilePath = keystoreProperties.getProperty("storeFile")
+                      if (storeFilePath != null) {
+                          storeFile = file(storeFilePath)
+                      }
+                      storePassword = keystoreProperties.getProperty("storePassword")
+                  }
+              }
+
+              buildTypes {
+                  release {
+                      signingConfig = signingConfigs.getByName("release")
+                      isMinifyEnabled = false
+                      isShrinkResources = false
+                      proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+                  }
+              }
+          }
+
+          flutter {
+              source = "../.."
+          }
+
+          dependencies {
+              implementation("androidx.multidex:multidex:2.0.1")
+          }
+          EOF
 
       - name: Build Release APK
         run: flutter build apk --release --no-shrink
