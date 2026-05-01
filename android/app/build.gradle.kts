@@ -35,7 +35,7 @@ android {
         minSdk = 24  
         
         // Yahan bhi API 34 strict kar diya hai
-        targetSdk = 34
+        targetSdk = 36
         
         versionCode = flutter.versionCode
         versionName = flutter.versionName
