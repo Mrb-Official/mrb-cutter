@@ -7,7 +7,6 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Key Properties Load Karne Ka Sahi Kotlin Code
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
 if (keystorePropertiesFile.exists()) {
@@ -16,8 +15,6 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.meet.mrbcutter"
-    
-    // Yahan API 34 strict kar diya hai permissions ke liye
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
@@ -31,10 +28,43 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.meet.mrbcutter" 
-        minSdk = 24  
-        
-        // Yahan bhi API 34 strict kar diya hai
+        applicationId = "com.meet.mrbcutter"
+        minSdk = 24
+        targetSdk = 36
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
+        multiDexEnabled = true
+    }
+
+    signingConfigs {
+        create("release") {
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            val storeFilePath = keystoreProperties.getProperty("storeFile")
+            if (storeFilePath != null) {
+                storeFile = file(storeFilePath)
+            }
+            storePassword = keystoreProperties.getProperty("storePassword")
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = false
+            isShrinkResources = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+        }
+    }
+}
+
+flutter {
+    source = "../.."
+}
+
+dependencies {
+    implementation("androidx.multidex:multidex:2.0.1")
+}        // Yahan bhi API 34 strict kar diya hai
         targetSdk = 36
         
         versionCode = flutter.versionCode
