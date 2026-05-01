@@ -18,7 +18,7 @@ android {
     namespace = "com.meet.mrbcutter"
     
     // Yahan API 34 strict kar diya hai permissions ke liye
-    compileSdk = 34
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
