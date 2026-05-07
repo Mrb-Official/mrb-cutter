@@ -264,12 +264,14 @@ class _HomeScreenState extends State<HomeScreen> {
       List<String> parts = _aspectRatio.split(':');
       double w = double.parse(parts[0]);
       double h = double.parse(parts[1]);
-      String cropFilter = "crop=ih*(${w}/${h}):ih";
+      
+      // Fixed: Mathematical Even-Number Enforcement & Boundary Check
+      String cropFilter = "crop='trunc(min(iw, ih*($w/$h))/2)*2':'trunc(min(ih, iw*($h/$w))/2)*2'";
 
       String ffmpegCommand;
       if (_watermarkPath != null) {
         ffmpegCommand =
-            '-i "$inputPath" -i "$_watermarkPath" -filter_complex "[0:v]${cropFilter}[v];[v][1:v]overlay=main_w-overlay_w-20:20" -c:v libx264 -preset ultrafast -crf 18 -threads 0 -c:a copy -f segment -segment_time 30 -segment_start_number 1 -reset_timestamps 1 "$outputPathPattern"';
+            '-i "$inputPath" -i "$_watermarkPath" -filter_complex "[0:v]$cropFilter[v];[v][1:v]overlay=main_w-overlay_w-20:20" -c:v libx264 -preset ultrafast -crf 18 -threads 0 -c:a copy -f segment -segment_time 30 -segment_start_number 1 -reset_timestamps 1 "$outputPathPattern"';
       } else {
         ffmpegCommand =
             '-i "$inputPath" -vf "$cropFilter" -c:v libx264 -preset ultrafast -crf 18 -threads 0 -c:a copy -f segment -segment_time 30 -segment_start_number 1 -reset_timestamps 1 "$outputPathPattern"';
