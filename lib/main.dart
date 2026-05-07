@@ -262,9 +262,9 @@ class _HomeScreenState extends State<HomeScreen> {
       String outputPathPattern = '$outputDirPath/reel_%03d.mp4';
 
       List<String> parts = _aspectRatio.split(':');
-      String w = parts[0];
-      String h = parts[1];
-      String cropFilter = "crop=ih*($w/$h):ih";
+      double w = double.parse(parts[0]);
+      double h = double.parse(parts[1]);
+      String cropFilter = "crop=ih*(${w}/${h}):ih";
 
       String ffmpegCommand;
       if (_watermarkPath != null) {
